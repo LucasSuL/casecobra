@@ -23,6 +23,14 @@
 ### 08-implement Steps: open /upload/layout, put it above children.
 
 - use `usePathname()` to get the current path name.
+- doing lots of checks
+
+### 08-implement dabase
+- register neon-tech
+- install prisma @prisma/client
+- npx prisma init --> to gen prisma folder
+- add db/index.ts, to make sure only 1 prisma client is created during dev phase by checking 'process.env.NODE_ENV'. (not that important)
+- add configure/design/page.tsx (the second step)
 
 
 
