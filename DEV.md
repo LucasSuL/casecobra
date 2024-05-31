@@ -20,5 +20,9 @@
 - changed core.ts and upload/page a lot, main idea is to pass the configId from the server side to the client side.
 - install shadcn-toast, follow the doc: need to add <Toast/> at the app/layout.tsx.
 
+### 08-implement Steps: open /upload/layout, put it above children.
+
+- use `usePathname()` to get the current path name.
+
 
 
