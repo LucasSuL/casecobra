@@ -1,9 +1,39 @@
-import React from 'react'
+import { db } from '@/db'
+import { notFound } from 'next/navigation'
+// import DesignConfigurator from './DesignConfigurator'
 
-const page = async () => {
+interface PageProps {
+  // searchParams is an obj, with key is of type string, value of type string, str arry or undifined
+  searchParams: {
+    [key: string]: string | string[] | undefined
+  }
+}
+
+const Page = async ({ searchParams }: PageProps) => {
+  const { id } = searchParams
+
+  if (!id || typeof id !== 'string') {
+    return notFound()
+  }
+
+  const configuration = await db.configuration.findUnique({
+    where: { id },
+  })
+
+  if (!configuration) {
+    return notFound()
+  }
+
+  const { imageUrl, width, height } = configuration
+
   return (
-    <div>page</div>
+    <div>{id}</div>
+    // <DesignConfigurator
+    //   configId={configuration.id}
+    //   imageDimensions={{ width, height }}
+    //   imageUrl={imageUrl}
+    // />
   )
 }
 
-export default page
+export default Page
