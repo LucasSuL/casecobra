@@ -46,6 +46,11 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
   - `  configuration   Configuration @relation(fields: [configurationId], references: [id])` fields is the outer key in current model, it related to model Configuration with its id.
   - `npm prisma db push` - this will push our schema onto Neon-tables
   - `npm i sharp@0.32.6` - used to deal with img to get its info, but need to change img into binary buffer first.`const buffer = await res.arrayBuffer();`
-  
+
+- DesignConfigurator
+  - `npx shadcn-ui@latest add aspect-ratio`, Displays content within a desired ratio.
+  - for <NextImage src={imageUrl}, need to add the Url source to next.configure
+  - `npm i react-rnd` - make components dragable.
+
 
 
