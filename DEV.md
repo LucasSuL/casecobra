@@ -50,7 +50,11 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
 - DesignConfigurator
   - `npx shadcn-ui@latest add aspect-ratio`, Displays content within a desired ratio.
   - for <NextImage src={imageUrl}, need to add the Url source to next.configure
-  - `npm i react-rnd` - make components dragable.
+  - `npm i react-rnd` - make components dragable. Pass paras: add 4 dots, add border, fix ratio, make it smaller.
+  - `npx shadcn-ui@latest add scroll-area` - and make content inside
+    - `npm install @headlessui/react`
+    - set /src/validators, come back to DesignConfigurator to set "options" state
+    - shadcn-labels
 
 
 
