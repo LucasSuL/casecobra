@@ -14,7 +14,7 @@ import {
   MATERIALS,
   MODELS,
 } from "@/validators/option-validators";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
@@ -23,7 +23,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface DesignConfiguratorProps {
   configId: string;
@@ -48,11 +50,99 @@ const DesignConfigurator = ({
     finish: FINISHES.options[0],
   });
 
+  // init state when user's img firstly loaded
+  const [renderedDimension, setRenderedDimension] = useState({
+    width: imageDimensions.width / 4,
+    height: imageDimensions.height / 4,
+  });
+
+  // the img's pos relative to the gray area
+  const [renderedPosition, setRenderedPosition] = useState({
+    x: 150,
+    y: 205,
+  });
+
+  // useRef to directly get the container, good method to use in React.
+  const phoneCaseRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { startUpload } = useUploadThing('imageUploader')
+
+  const saveConfiguration = async () => {
+    try {
+      // get the position (compared to the entire window) and size
+      const {
+        left: caseLeft,
+        top: caseTop,
+        width,
+        height,
+      } = phoneCaseRef.current!.getBoundingClientRect(); // ! to tell typescript this exists
+
+      const { left: containerLeft, top: containerTop } =
+        containerRef.current!.getBoundingClientRect();
+
+      // relative pos of phone to gray area
+      const leftOffset = caseLeft - containerLeft;
+      const topOffset = caseTop - containerTop;
+
+      // now our coordinary has aligned, this is the relative pos of img and phone.
+      const actualX = renderedPosition.x - leftOffset
+      const actualY = renderedPosition.y - topOffset
+
+      // create a <canvas> element, name it canvas. <canvas> is powerful in drawing on webpage
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+
+      // context-2d is the most commonly used one, used for two-dimensional graphics rendering.
+      const ctx = canvas.getContext('2d')
+
+      // create user imge
+      const userImage = new Image()
+      userImage.crossOrigin = 'anonymous' // avoid CORS (Cross-Origin Resource Sharing) issues.
+      userImage.src = imageUrl
+      await new Promise((resolve) => (userImage.onload = resolve)) // equal to userImage.onload = () => resolve(userImage);
+
+      // draw
+      ctx?.drawImage(
+        userImage,
+        actualX,
+        actualY,
+        renderedDimension.width,
+        renderedDimension.height
+      )
+
+      // test
+      canvas.toBlob(blob => {
+        if (blob) {
+          const file = new File([blob], 'filename.png', { type: 'image/png' });
+          startUpload([file], { configId }); // pass configId so that no extra config might create
+        }
+      }, 'image/png'); 
+
+      // export img
+      // const dataUrl = canvas.toDataURL('image/png').split(',')[1] // same as no paras
+
+    } catch (err) {
+      toast({
+        title: "Something went wrong",
+        description:
+          "There was a problem saving your config, please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20">
-      <div className="relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+      {/* gray area */}
+      <div
+        ref={containerRef}
+        className="relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      >
         <div className="relative w-60 bg-opacity-50 pointer-events-none aspect-[896/1831]">
           <AspectRatio
+            ref={phoneCaseRef}
             ratio={896 / 1831}
             className="pointer-events-none relative z-50 aspect-[896/1831] w-full"
           >
@@ -78,7 +168,7 @@ const DesignConfigurator = ({
 
         {/* make img dragable */}
         <Rnd
-          // make img looks smaller at first
+          // make img looks smaller at first by / 4
           default={{
             x: 150,
             y: 205,
@@ -96,6 +186,21 @@ const DesignConfigurator = ({
           }}
           // add border to img
           className="absolute z-20 border-[2px] border-zinc-400"
+          // record the user's current img setting by setState of renderedDimention and RenderedPosition
+          // just use part of the paras, we ues _ to skip necessary paras
+          onResizeStop={(_, __, ref, ___, { x, y }) => {
+            setRenderedDimension({
+              // 50px --> 50 --> int: 50
+              height: parseInt(ref.style.height.slice(0, -2)),
+              width: parseInt(ref.style.width.slice(0, -2)),
+            });
+
+            setRenderedPosition({ x, y });
+          }}
+          onDragStop={(_, data) => {
+            const { x, y } = data;
+            setRenderedPosition({ x, y });
+          }}
         >
           <div className="relative w-full h-full">
             <NextImage
@@ -290,7 +395,6 @@ const DesignConfigurator = ({
           <div className="h-px w-full bg-zinc-200" />
           <div className="w-full h-full flex justify-end items-center">
             <div className="w-full flex gap-6 items-center">
-
               {/* show price */}
               <p className="font-medium whitespace-nowrap">
                 {formatPrice(
@@ -299,11 +403,15 @@ const DesignConfigurator = ({
                 )}
               </p>
 
-{/* button */}
-<Button>
-  
-</Button>
-
+              {/* button */}
+              <Button
+                // size="sm"
+                className="w-full"
+                onClick={()=>saveConfiguration()}
+              >
+                Continue
+                <ArrowRight className="h-4 w-4 ml-1.5 inline" />
+              </Button>
             </div>
           </div>
         </div>

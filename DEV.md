@@ -57,8 +57,12 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
     - shadcn-labels
     - `npx shadcn-ui@latest add dropdown-menu` a little detail to reserve space for unchecked item, in classname, use cn( a===b?"opacity-100":"opacity-0") 
     - use formatPrice util
-  - button
-    - 
+  - handle user's img config
+    - design 2 new state to record img config(size and position), in Rnd, use its provided paras to deconstruture it and save it to our state
+    - init 2 refs(phone area and gray dragable area), use `getBoundingClientRect()` to get the position and size.
+    - align the coordination system, and calc the relative pos
+    - create canvas - context 2d
+    - create userImage - 
 
 
 
