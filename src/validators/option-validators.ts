@@ -14,68 +14,74 @@ export const COLORS = [
   { label: 'Rose', value: 'rose', tw: 'rose-950' },
 ] as const // make the array never change at runtime
 
-// export const MODELS = {
-//   name: 'models',
-//   options: [
-//     {
-//       label: 'iPhone X',
-//       value: 'iphonex',
-//     },
-//     {
-//       label: 'iPhone 11',
-//       value: 'iphone11',
-//     },
-//     {
-//       label: 'iPhone 12',
-//       value: 'iphone12',
-//     },
-//     {
-//       label: 'iPhone 13',
-//       value: 'iphone13',
-//     },
-//     {
-//       label: 'iPhone 14',
-//       value: 'iphone14',
-//     },
-//     {
-//       label: 'iPhone 15',
-//       value: 'iphone15',
-//     },
-//   ],
-// } as const
+export const MODELS = {
+  name: 'models',
+  options: [
+    {
+      label: 'iPhone X',
+      value: 'iphonex',
+    },
+    {
+      label: 'iPhone 11',
+      value: 'iphone11',
+    },
+    {
+      label: 'iPhone 12',
+      value: 'iphone12',
+    },
+    {
+      label: 'iPhone 13',
+      value: 'iphone13',
+    },
+    {
+      label: 'iPhone 14',
+      value: 'iphone14',
+    },
+    {
+      label: 'iPhone 15',
+      value: 'iphone15',
+    },
+  ],
+} as const
 
-// export const MATERIALS = {
-//   name: 'material',
-//   options: [
-//     {
-//       label: 'Silicone',
-//       value: 'silicone',
-//       description: undefined,
-//       price: PRODUCT_PRICES.material.silicone,
-//     },
-//     {
-//       label: 'Soft Polycarbonate',
-//       value: 'polycarbonate',
-//       description: 'Scratch-resistant coating',
-//       price: PRODUCT_PRICES.material.polycarbonate,
-//     },
-//   ],
-// } as const
+export const MATERIALS = {
+  name: 'material',
+  options: [
+    {
+      label: 'Silicone',
+      value: 'silicone',
+      description: undefined,
+      // price: PRODUCT_PRICES.material.silicone,
+      price: 0,
+    },
+    {
+      label: 'Soft Polycarbonate',
+      value: 'polycarbonate',
+      description: 'Scratch-resistant coating',
+      // price: PRODUCT_PRICES.material.polycarbonate,
+      price: 5_00,
+    },
+  ],
+} as const
 
-// export const FINISHES = {
-//   name: 'finish',
-//   options: [
-//     {
-//       label: 'Smooth Finish',
-//       value: 'smooth',
-//       description: undefined,
-//       price: PRODUCT_PRICES.finish.smooth,
-//     },
-//     {
-//       label: 'Textured Finish',
-//       value: 'textured',
-//       description: 'Soft grippy texture',
-//       price: PRODUCT_PRICES.finish.textured,
-//     },
-//   ],
-// } as const
+export const FINISHES = {
+  name: 'finish',
+  options: [
+    {
+      label: 'Smooth Finish',
+      value: 'smooth',
+      description: undefined,
+      // price: PRODUCT_PRICES.finish.smooth,
+      price: 0,
+    },
+    {
+      label: 'Textured Finish',
+      value: 'textured',
+      description: 'Soft grippy texture',
+      // price: PRODUCT_PRICES.finish.textured,
+      price: 3_00,
+    },
+  ],
+} as const
+
+export const BASE_PRICE = 14_00

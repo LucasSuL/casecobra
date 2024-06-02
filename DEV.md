@@ -55,6 +55,11 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
     - `npm install @headlessui/react`
     - set /src/validators, come back to DesignConfigurator to set "options" state
     - shadcn-labels
+    - `npx shadcn-ui@latest add dropdown-menu` a little detail to reserve space for unchecked item, in classname, use cn( a===b?"opacity-100":"opacity-0") 
+    - use formatPrice util
+  - button
+    - 
+
 
 
 
