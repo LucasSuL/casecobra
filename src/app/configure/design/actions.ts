@@ -1,4 +1,4 @@
-// DB actions
+"use server";
 
 import { db } from "@/db";
 import {

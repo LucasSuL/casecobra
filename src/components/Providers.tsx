@@ -1,20 +1,14 @@
-'use client';
+"use client";
 
-import React from "react";
+import React, { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // create instance
 const queryClient = new QueryClient();
 
-interface ProvidersProps {
-  children: React.ReactNode;
-}
-
-const Providers: React.FC<ProvidersProps> = ({ children }) => {
+const Providers = ({ children }: { children: ReactNode }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
 
