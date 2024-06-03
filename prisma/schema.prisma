@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// new added:
+// new added enum
 enum OrderStatus {
   fulfilled
   shipped
@@ -52,10 +52,10 @@ model Configuration {
   width           Int
   height          Int
   imageUrl        String
-  color           CaseColor?
-  model           PhoneModel?
-  material        CaseMaterial?
-  finish          CaseFinish?
+  color           CaseColor? // enum
+  model           PhoneModel? // enum
+  material        CaseMaterial? // enum
+  finish          CaseFinish? // enum
   croppedImageUrl String?  
   Order           Order[]
 }

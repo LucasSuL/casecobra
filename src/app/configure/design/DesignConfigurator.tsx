@@ -26,6 +26,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { useUploadThing } from "@/lib/uploadthing";
+import { SaveConfigArgs, saveConfig as _saveConfig } from "./actions";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 interface DesignConfiguratorProps {
   configId: string;
@@ -38,6 +41,35 @@ const DesignConfigurator = ({
   imageUrl,
   imageDimensions,
 }: DesignConfiguratorProps) => {
+  // hook from next.js, router.push could push user to a new page
+  const router = useRouter();
+
+  // save the user config by useMutation hook: to do CRUD
+  // mutate is the func returned by useMutation, rename it to saveConfig (later called by onclick button)
+  // isPending is a state returned by useMutation, can be used to control UI
+  const { mutate: saveConfig, isPending } = useMutation({
+    mutationKey: ["save-config"],
+
+    // wait for two action: save cropped img + update db.
+    mutationFn: async (args: SaveConfigArgs) => {
+      await Promise.all([saveConfiguration(), _saveConfig(args)]);
+    },
+
+    // useMutation could auto-manage async state:
+    // when mutation failed
+    onError: () => {
+      toast({
+        title: "Something went wrong",
+        description: "There was an error on our end. Please try again.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      router.push(`/configure/preview?id=${configId}`);
+    },
+  });
+
+  // user selection status
   const [options, setOptions] = useState<{
     color: (typeof COLORS)[number];
     model: (typeof MODELS.options)[number];
@@ -66,8 +98,9 @@ const DesignConfigurator = ({
   const phoneCaseRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { startUpload } = useUploadThing('imageUploader')
+  const { startUpload } = useUploadThing("imageUploader");
 
+  // to save and upload the user's cropped img to uploadthing
   const saveConfiguration = async () => {
     try {
       // get the position (compared to the entire window) and size
@@ -86,22 +119,22 @@ const DesignConfigurator = ({
       const topOffset = caseTop - containerTop;
 
       // now our coordinary has aligned, this is the relative pos of img and phone.
-      const actualX = renderedPosition.x - leftOffset
-      const actualY = renderedPosition.y - topOffset
+      const actualX = renderedPosition.x - leftOffset;
+      const actualY = renderedPosition.y - topOffset;
 
       // create a <canvas> element, name it canvas. <canvas> is powerful in drawing on webpage
-      const canvas = document.createElement('canvas')
-      canvas.width = width
-      canvas.height = height
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
 
       // context-2d is the most commonly used one, used for two-dimensional graphics rendering.
-      const ctx = canvas.getContext('2d')
+      const ctx = canvas.getContext("2d");
 
       // create user imge
-      const userImage = new Image()
-      userImage.crossOrigin = 'anonymous' // avoid CORS (Cross-Origin Resource Sharing) issues.
-      userImage.src = imageUrl
-      await new Promise((resolve) => (userImage.onload = resolve)) // equal to userImage.onload = () => resolve(userImage);
+      const userImage = new Image();
+      userImage.crossOrigin = "anonymous"; // avoid CORS (Cross-Origin Resource Sharing) issues.
+      userImage.src = imageUrl;
+      await new Promise((resolve) => (userImage.onload = resolve)); // equal to userImage.onload = () => resolve(userImage);
 
       // draw
       ctx?.drawImage(
@@ -110,19 +143,18 @@ const DesignConfigurator = ({
         actualY,
         renderedDimension.width,
         renderedDimension.height
-      )
+      );
 
       // test
-      canvas.toBlob(blob => {
+      canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], 'filename.png', { type: 'image/png' });
+          const file = new File([blob], "filename.png", { type: "image/png" });
           startUpload([file], { configId }); // pass configId so that no extra config might create
         }
-      }, 'image/png'); 
+      }, "image/png");
 
       // export img
       // const dataUrl = canvas.toDataURL('image/png').split(',')[1] // same as no paras
-
     } catch (err) {
       toast({
         title: "Something went wrong",
@@ -403,11 +435,20 @@ const DesignConfigurator = ({
                 )}
               </p>
 
-              {/* button */}
+              {/* submit button */}
               <Button
                 // size="sm"
                 className="w-full"
-                onClick={()=>saveConfiguration()}
+                disabled={isPending}
+                onClick={() =>
+                  saveConfig({
+                    configId,
+                    color: options.color.value,
+                    finish: options.finish.value,
+                    material: options.material.value,
+                    model: options.model.value,
+                  })
+                }
               >
                 Continue
                 <ArrowRight className="h-4 w-4 ml-1.5 inline" />

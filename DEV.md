@@ -62,7 +62,48 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
     - init 2 refs(phone area and gray dragable area), use `getBoundingClientRect()` to get the position and size.
     - align the coordination system, and calc the relative pos
     - create canvas - context 2d
-    - create userImage - 
+    - create userImage --> change format to blob --> file --> uploadthing
+  - `npm install @tanstack/react-query` --> 
+    ```javascript
+    import React from 'react';
+    import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+    // create instance
+    const queryClient = new QueryClient();
+
+    const fetchUserData = async () => {
+      const response = await fetch('https://api.example.com/user');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    };
+
+    const UserData = () => {
+      // get 3 things from useQuery
+      const { data, error, isLoading } = useQuery(['userData'], fetchUserData);
+
+      if (isLoading) return <div>Loading...</div>;
+      if (error) return <div>Error: {error.message}</div>;
+
+      return (
+        <div>
+          <h1>User Data</h1>
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </div>
+      );
+    };
+
+    const App = () => (
+      // wrapped
+      <QueryClientProvider client={queryClient}>
+        <UserData />
+      </QueryClientProvider>
+    );
+
+    export default App;
+    ```
+    - add Providers.tsx
 
 
 
