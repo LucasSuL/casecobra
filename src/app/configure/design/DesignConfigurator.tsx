@@ -8,12 +8,11 @@ import NextImage from "next/image";
 import { Rnd } from "react-rnd";
 import { RadioGroup } from "@headlessui/react";
 import {
-  BASE_PRICE,
   COLORS,
   FINISHES,
   MATERIALS,
   MODELS,
-} from "@/validators/option-validators";
+} from "@/validators/option-validator";
 import { useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,6 +28,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { SaveConfigArgs, saveConfig as _saveConfig } from "./actions";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { BASE_PRICE } from "@/config/products";
 
 interface DesignConfiguratorProps {
   configId: string;
@@ -47,7 +47,7 @@ const DesignConfigurator = ({
   // save the user config by useMutation hook: to do CRUD
   // param-mutate is the func returned by useMutation, rename it to saveConfig (later called by onclick button)
   // isPending is a state returned by useMutation, can be used to control UI
-  const { mutate: saveConfig, } = useMutation({
+  const { mutate: saveConfig } = useMutation({
     mutationKey: ["save-config"],
 
     // wait for two action: save cropped img + update db.

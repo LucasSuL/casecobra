@@ -1,11 +1,11 @@
 "use client";
 
-import { PRODUCT_PRICES } from "@/app/config/product";
+import { BASE_PRICE, PRODUCT_PRICES } from "@/config/products";
 import Phone from "@/components/Phone";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { cn, formatPrice } from "@/lib/utils";
-import { BASE_PRICE, COLORS, MODELS } from "@/validators/option-validators";
+import { COLORS, MODELS } from "@/validators/option-validator";
 import { Configuration } from "@prisma/client";
 import { ArrowRight, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -71,6 +71,7 @@ const DesignPreview = ({ configuration }: DesignPreviewProps) => {
   // when user submit the button, firstly check if user logged in. 
   const handleCheckout = () => {
     if (user) {
+      
       // create payment session
       createPaymentSession({ configId: id });
     } else {
