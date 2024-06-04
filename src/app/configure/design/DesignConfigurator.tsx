@@ -45,7 +45,7 @@ const DesignConfigurator = ({
   const router = useRouter();
 
   // save the user config by useMutation hook: to do CRUD
-  // mutate is the func returned by useMutation, rename it to saveConfig (later called by onclick button)
+  // param-mutate is the func returned by useMutation, rename it to saveConfig (later called by onclick button)
   // isPending is a state returned by useMutation, can be used to control UI
   const { mutate: saveConfig, } = useMutation({
     mutationKey: ["save-config"],

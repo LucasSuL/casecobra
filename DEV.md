@@ -106,6 +106,23 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
     - add Providers.tsx
 
 ### 10-preview
-- 
+- in page, pass the configuration to DesignPreview.tsx
+- resolve the id, and implement all the layout in DesignPreview.tsx
+- Recursive font by changing `src/Layout.tsx`
+  - `const recursive = Recursive({ subsets: ["latin"] })`
+  - `<body className={recursive.className}>`
+- modify components/ui/button, add more state?, like isLoading.
 
 
+
+### 11-secure payment
+- /preview/actions.ts
+  - get user by const {getUser} = getKindeServerSession();
+  const user = await getUser()
+  - get bill order
+  - recalculate the price (always do this on server side)
+  - install stripe, copy secret key to local env. and add a helper function in lib/stripe.ts
+    - create product, stripeSession, pass relative parameters.
+  - check user's loggin state before calling stripe func
+    - if user's not logged in, open LoginModal
+    - LoginModal: install shadcn-dialog

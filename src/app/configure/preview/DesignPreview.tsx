@@ -11,6 +11,10 @@ import { ArrowRight, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Confetti from "react-dom-confetti";
+import { createCheckoutSession } from "./actions";
+import { useMutation } from "@tanstack/react-query";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import LoginModal from "@/components/LoginModal";
 
 interface DesignPreviewProps {
   configuration: Configuration;
@@ -21,7 +25,7 @@ const DesignPreview = ({ configuration }: DesignPreviewProps) => {
   const router = useRouter();
   const { toast } = useToast();
   const { id } = configuration;
-  // const { user } = useKindeBrowserClient()
+  const { user } = useKindeBrowserClient()
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
   // directly show confetti when entering this preview page.
@@ -33,15 +37,48 @@ const DesignPreview = ({ configuration }: DesignPreviewProps) => {
     (supportedColor) => supportedColor.value === color
   )?.tw;
 
-  // find label
+  // find model label
   const { label: modelLabel } = MODELS.options.find(
     ({ value }) => value === model
   )!;
 
+  // recalc price
   let totalPrice = BASE_PRICE;
   if (material === "polycarbonate")
     totalPrice += PRODUCT_PRICES.material.polycarbonate;
   if (finish === "textured") totalPrice += PRODUCT_PRICES.finish.textured;
+
+  // rename mutate -> createPaymentSession
+  const { mutate: createPaymentSession } = useMutation({
+    mutationKey: ["get-checkout-session"],
+    mutationFn: createCheckoutSession,
+
+    // if success, we'll get the url returen by mutation Fn
+    // either goto thank you page or go back
+    onSuccess: ({ url }) => {
+      if (url) router.push(url);
+      else throw new Error("Unable to retrieve payment URL.");
+    },
+    onError: () => {
+      toast({
+        title: "Something went wrong",
+        description: "There was an error on our end. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // when user submit the button, firstly check if user logged in. 
+  const handleCheckout = () => {
+    if (user) {
+      // create payment session
+      createPaymentSession({ configId: id });
+    } else {
+      // need to log in
+      localStorage.setItem("configurationId", id);
+      setIsLoginModalOpen(true);
+    }
+  };
 
   return (
     <>
@@ -55,6 +92,8 @@ const DesignPreview = ({ configuration }: DesignPreviewProps) => {
           config={{ elementCount: 100, spread: 100 }}
         />
       </div>
+
+      <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
 
       <div className="mt-20 flex flex-col items-center md:grid text-sm sm:grid-cols-12 sm:grid-rows-1 sm:gap-x-6 md:gap-x-8 lg:gap-x-12">
         {/* final view */}
@@ -97,46 +136,49 @@ const DesignPreview = ({ configuration }: DesignPreviewProps) => {
             </div>
           </div>
 
-          <div className="bg-gray-50 p-6 sm:rounded-lg sm:p-8 my-8 text-sm">
-            {/* flow-root  */}
-            <div className="flex items-center justify-between py-1 mt-2">
-              <p className="text-gray-600">Base price</p>
-              <p className="font-medium text-gray-900">
-                {formatPrice(BASE_PRICE / 100)}
-              </p>
-            </div>
+          <div className="mt-8">
+            <div className="bg-gray-50 p-6 sm:rounded-lg sm:p-8">
+              <div className="flow-root text-sm">
+                <div className="flex items-center justify-between py-1 mt-2">
+                  <p className="text-gray-600">Base price</p>
+                  <p className="font-medium text-gray-900">
+                    {formatPrice(BASE_PRICE / 100)}
+                  </p>
+                </div>
 
-            {finish === "textured" ? (
-              <div className="flex items-center justify-between py-1 mt-2">
-                <p className="text-gray-600">Textured finish</p>
-                <p className="font-medium text-gray-900">
-                  {formatPrice(PRODUCT_PRICES.finish.textured / 100)}
-                </p>
+                {finish === "textured" ? (
+                  <div className="flex items-center justify-between py-1 mt-2">
+                    <p className="text-gray-600">Textured finish</p>
+                    <p className="font-medium text-gray-900">
+                      {formatPrice(PRODUCT_PRICES.finish.textured / 100)}
+                    </p>
+                  </div>
+                ) : null}
+
+                {material === "polycarbonate" ? (
+                  <div className="flex items-center justify-between py-1 mt-2">
+                    <p className="text-gray-600">Soft polycarbonate material</p>
+                    <p className="font-medium text-gray-900">
+                      {formatPrice(PRODUCT_PRICES.material.polycarbonate / 100)}
+                    </p>
+                  </div>
+                ) : null}
+
+                <div className="my-2 h-px bg-gray-200" />
+
+                <div className="flex items-center justify-between py-2">
+                  <p className="font-semibold text-gray-900">Order total</p>
+                  <p className="font-semibold text-gray-900">
+                    {formatPrice(totalPrice / 100)}
+                  </p>
+                </div>
               </div>
-            ) : null}
-
-            {material === "polycarbonate" ? (
-              <div className="flex items-center justify-between py-1 mt-2">
-                <p className="text-gray-600">Soft polycarbonate material</p>
-                <p className="font-medium text-gray-900">
-                  {formatPrice(PRODUCT_PRICES.material.polycarbonate / 100)}
-                </p>
-              </div>
-            ) : null}
-
-            <div className="my-2 h-px bg-gray-200" />
-
-            <div className="flex items-center justify-between py-2">
-              <p className="font-semibold text-gray-900">Order total</p>
-              <p className="font-semibold text-gray-900">
-                {formatPrice(totalPrice / 100)}
-              </p>
             </div>
 
             <div className="mt-8 flex justify-end pb-6">
               <Button
-                // onClick={() => handleCheckout()}
-                className="px-4 sm:px-6 lg:px-8 bg-green-700"
+                onClick={() => handleCheckout()}
+                className="px-4 sm:px-6 lg:px-8 bg-green-600"
               >
                 Check out <ArrowRight className="h-4 w-4 ml-1.5 inline" />
               </Button>
