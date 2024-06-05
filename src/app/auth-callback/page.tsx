@@ -15,9 +15,10 @@ const Page = () => {
     if (configurationId) setConfigId(configurationId)
   }, [])
 
+  // get data from getAuthStatus()
   const { data } = useQuery({
-    queryKey: ['auth-callback'],
-    queryFn: async () => await getAuthStatus(),
+    queryKey: ['auth-callback'], // set a name to manage cache (same as 'key' in hashmap).
+    queryFn: async () => await getAuthStatus(), // use callback func to make sure func will not be called when the component is rendering + allow dynamic paras
     retry: true,
     retryDelay: 500,
   })

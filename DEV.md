@@ -63,7 +63,7 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
     - align the coordination system, and calc the relative pos
     - create canvas - context 2d
     - create userImage --> change format to blob --> file --> uploadthing
-  - `npm install @tanstack/react-query` --> 
+  - `npm install @tanstack/react-query` -->  
     ```javascript
     import React from 'react';
     import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -126,3 +126,14 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
   - check user's loggin state before calling stripe func
     - if user's not logged in, open LoginModal
     - LoginModal: install shadcn-dialog
+
+### 12-auth-callback
+- Basic Idea: each login user will be filtered through 'src/app/auth-callback' by "KINDE_POST_LOGIN_REDIRECT_URL=http://localhost:3000/auth-callback". 
+- in 'auth-callback/page.tsx', if find local storage, which means that the user finished a configuration and just logged in, we push to the preview page. If there's no local storage, we push user to home page '/'.
+
+### 13-strip web-hok
+在 Stripe 中，Webhook 用于在特定事件发生时通知你的服务器。例如，当支付成功、支付失败、订阅更新等事件发生时，Stripe 会向你指定的 Webhook URL 发送一个 HTTP POST 请求。这使你能够自动处理这些事件，例如更新订单状态、发送确认邮件等。
+- stripe, create a new webhook, fillin fake URL, and add event(checkout.session.complete), copy and past the STRIPE_WEBHOOK_SECRET to .env
+- route.ts
+  - create event and session, get info from session and update our database with new payment state, all the user address
+- Vercel
