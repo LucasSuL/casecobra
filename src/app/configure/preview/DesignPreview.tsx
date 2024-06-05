@@ -30,7 +30,7 @@ const DesignPreview = ({ configuration }: DesignPreviewProps) => {
 
   // directly show confetti when entering this preview page.
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
-  useEffect(() => setShowConfetti(true));
+  useEffect(() => setShowConfetti(true),[]);
 
   // find the corresponding tw value of a given color
   const tw = COLORS.find(

@@ -139,3 +139,6 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
 - Vercel
   - npm run build
     - got 'escaped' error -> mod the `.eslintrc.json` to update rules
+  - new project in vercel -> open github repo -> paste all env -> deploy
+    - deploy warning, so add an empty array to setshowconfetti useEffect.
+    - deploy error, need to generating Prisma Client on every deployment: https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/vercel-caching-issue
