@@ -137,3 +137,5 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
 - route.ts
   - create event and session, get info from session and update our database with new payment state, all the user address
 - Vercel
+  - npm run build
+    - got 'escaped' error -> mod the `.eslintrc.json` to update rules

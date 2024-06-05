@@ -9,7 +9,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 
-const page = () => {
+const Page = () => {
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
   const [uploadProgress, setUploadProgress] = useState<number>(45);
@@ -130,4 +130,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
