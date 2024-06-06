@@ -142,3 +142,15 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
   - new project in vercel -> open github repo -> paste all env -> deploy
     - deploy warning, so add an empty array to setshowconfetti useEffect.
     - deploy error, need to generating Prisma Client on every deployment: https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/vercel-caching-issue
+  - once we commit a change to github repo, vercel will automatically redeploy.
+  - change the vercel environment start with 'localhost' for the real domain.
+  - update the stripe webhook.
+
+### 13-Thank you page
+- page: suspense
+- actions.ts: create and export a function called 'getPaymentStatus' use orderId as params, again on server side, to fetch the order's info from DB. If not yet paid (return false), else payment done (return the Order).
+- in ThankYou.tsx: 
+  - get orderId from URL by useSearchParams()
+  - use useQuery again to call the 'getPaymentStatus' function, and get the `data`. And RETRY every 0.5s.
+
+### 14-dashboard
