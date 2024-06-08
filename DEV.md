@@ -154,3 +154,22 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
   - use useQuery again to call the 'getPaymentStatus' function, and get the `data`. And RETRY every 0.5s.
 
 ### 14-dashboard
+- Firstly, avoid unauthenticated user from directly type the dashboard url address to visit secret data, we have to firstly check the user.
+- db.order.aggregate to get current order's amount. Set time to weekly or monthly --> checking code for details.
+- 'shadcn/card' + Progress to display the current progress
+- shadcn/table:
+  - behind it is Tanstack table
+  - map status to create Row
+  - onclick = mutate(id, newStatus) + useMutation:
+  ```javascript
+  const router = useRouter();
+
+  const { mutate } = useMutation({
+    mutationKey: ["change-order-status"],
+    mutationFn: changeOrderStatus,
+    onSuccess: () => router.refresh(),
+  });
+  ```
+  - when click, pass the paras and call changeOrderStatus. implement changeOrderStatus in actions.ts, within it update the db.
+  - when finished, if success, we can use the router.refresh().
+
