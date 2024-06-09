@@ -104,6 +104,12 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
     export default App;
     ```
     - add Providers.tsx
+    - Button, destruct isPending from useMutation, and 
+      ```javascript
+      disabled={isPending}
+      isLoading={isPending}
+      loadingText="Saving"
+      ```
 
 ### 10-preview
 - in page, pass the configuration to DesignPreview.tsx
@@ -131,7 +137,7 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
 - Basic Idea: each login user will be filtered through 'src/app/auth-callback' by "KINDE_POST_LOGIN_REDIRECT_URL=http://localhost:3000/auth-callback". 
 - in 'auth-callback/page.tsx', if find local storage, which means that the user finished a configuration and just logged in, we push to the preview page. If there's no local storage, we push user to home page '/'.
 
-### 13-strip web-hok
+### 13-strip webhook
 在 Stripe 中，Webhook 用于在特定事件发生时通知你的服务器。例如，当支付成功、支付失败、订阅更新等事件发生时，Stripe 会向你指定的 Webhook URL 发送一个 HTTP POST 请求。这使你能够自动处理这些事件，例如更新订单状态、发送确认邮件等。
 - stripe, create a new webhook, fillin fake URL, and add event(checkout.session.complete), copy and past the STRIPE_WEBHOOK_SECRET to .env
 - route.ts
@@ -173,3 +179,23 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
   - when click, pass the paras and call changeOrderStatus. implement changeOrderStatus in actions.ts, within it update the db.
   - when finished, if success, we can use the router.refresh().
 
+### 15-react email
+- npm i @react-email/components
+- create OrderReceivedEmail.tsx. demo can be found at https://demo.react.email/preview/receipts/nike-receiptview=source
+- `<Html> <Head /> <Preview>: this will display as the title at inbox`
+- add `VERCEL_URL = casecobra-one-nu.vercel.app/` in env, and define baseUrl
+- copy css config at the bottom.
+- RESEND:
+  - npm i resend
+  - create acct, creat api/key, save it in env
+  - go back to /webhooks/route.ts： 
+  ```javascript
+  import {Resend} from 'resend'
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  ```
+  - at the end of try, add `await resend.emails.send({.....`
+  - don't forget to add RESEND_API_KEY to vercel env.
+
+### 16-metadata:
+- in utils.ts: `export function constructMetadata({`
+- in layout: `export const metadata = constructMetadata()`

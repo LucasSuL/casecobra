@@ -47,7 +47,7 @@ const DesignConfigurator = ({
   // save the user config by useMutation hook: to do CRUD
   // param-mutate is the func returned by useMutation, rename it to saveConfig (later called by onclick button)
   // isPending is a state returned by useMutation, can be used to control UI
-  const { mutate: saveConfig } = useMutation({
+  const { mutate: saveConfig, isPending } = useMutation({
     mutationKey: ["save-config"],
 
     // wait for two action: save cropped img + update db.
@@ -439,7 +439,9 @@ const DesignConfigurator = ({
               <Button
                 size="sm"
                 className="w-full"
-                // disabled={isPending}
+                disabled={isPending}
+                isLoading={isPending}
+                loadingText="Saving"
                 onClick={() =>
                   saveConfig({
                     configId,
