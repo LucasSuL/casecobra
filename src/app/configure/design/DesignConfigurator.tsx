@@ -145,13 +145,27 @@ const DesignConfigurator = ({
         renderedDimension.height
       );
 
-      // test
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const file = new File([blob], "filename.png", { type: "image/png" });
-          startUpload([file], { configId }); // pass configId so that no extra config might create
-        }
-      }, "image/png");
+      // 创建一个 Promise 包装 canvas.toBlob
+      const file = await new Promise<File | null>((resolve) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], "filename.png", {
+              type: "image/png",
+            });
+            resolve(file);
+          } else {
+            resolve(null);
+          }
+        }, "image/png");
+      });
+
+      // 如果文件存在，上传文件
+      if (file) {
+        const uploadResponse = await startUpload([file], { configId }); // pass configId so that no extra config might create
+        console.log("Upload response:", uploadResponse); // 检查上传响应
+      } else {
+        throw new Error("Failed to create file from canvas blob");
+      } 
 
       // export img
       // const dataUrl = canvas.toDataURL('image/png').split(',')[1] // same as no paras

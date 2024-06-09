@@ -21,17 +21,18 @@ interface DesignPreviewProps {
 }
 
 const DesignPreview = ({ configuration }: DesignPreviewProps) => {
-  const { color, model, finish, material } = configuration;
   const router = useRouter();
   const { toast } = useToast();
   const { id } = configuration;
   const { user } = useKindeBrowserClient()
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
-
+  
   // directly show confetti when entering this preview page.
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   useEffect(() => setShowConfetti(true),[]);
-
+  
+  const { color, model, finish, material } = configuration;
+  
   // find the corresponding tw value of a given color
   const tw = COLORS.find(
     (supportedColor) => supportedColor.value === color
