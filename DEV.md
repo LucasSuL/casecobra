@@ -151,6 +151,9 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
   - once we commit a change to github repo, vercel will automatically redeploy.
   - change the vercel environment start with 'localhost' for the real domain.
   - update the stripe webhook.
+  - update the Kinde, my next applications - detail
+    - "Allowed callback URLs": "https://casecobra-one-nu.vercel.app/api/auth/kinde_callback"
+    - "Allowed logout redirect URLs" : "https://casecobra-one-nu.vercel.app/"
 
 ### 13-Thank you page
 - page: suspense

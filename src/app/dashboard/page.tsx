@@ -81,8 +81,8 @@ const Page = async () => {
 
   return (
     <div className="flex min-h-screen w-full bg-muted/40">
-      <div className="max-w-7xl w-full mx-auto flex flex-col sm:gap-4 sm:py-4">
-        <div className="flex flex-col gap-16">
+      <div className="max-w-7xl w-full mx-auto flex flex-col sm:gap-4 py-4 ">
+        <div className="flex flex-col gap-16 mx-5 sm:mx-20">
           <div className="grid gap-4 sm:grid-cols-2">
             {/* weekly card */}
             <Card>
@@ -156,6 +156,10 @@ const Page = async () => {
 
                   <TableCell className='hidden sm:table-cell'>
                     <StatusDropdown id={order.id} orderStatus={order.status} />
+                  </TableCell>
+
+                  <TableCell className='hidden md:table-cell'>
+                    {order.createdAt.toLocaleDateString()}
                   </TableCell>
 
                   <TableCell className='text-right'>
