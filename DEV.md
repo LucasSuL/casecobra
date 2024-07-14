@@ -183,6 +183,7 @@ const className = cn('bg-blue-500', 'text-white', { 'hover:bg-blue-700': true, '
   - when finished, if success, we can use the router.refresh().
 
 ### 15-react email
+- need custom domain!
 - npm i @react-email/components
 - create OrderReceivedEmail.tsx. demo can be found at https://demo.react.email/preview/receipts/nike-receiptview=source
 - `<Html> <Head /> <Preview>: this will display as the title at inbox`
